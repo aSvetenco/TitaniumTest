@@ -8,4 +8,34 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="SplashScreen" parent="NoActionBar">
+        <item name="android:windowBackground">@drawable/springfield</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="MainActivityElementsStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginTop">@dimen/spacing_all_10dp</item>
+        <item name="android:layout_marginLeft">@dimen/spacing_all_20dp</item>
+        <item name="android:layout_marginRight">@dimen/spacing_all_20dp</item>
+    </style>
+
+    <style name="ItemImageTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/spacing_all_10dp</item>
+        <item name="android:textSize">@dimen/txt_16sp_size</item>
+        <item name="android:textAllCaps">true</item>
+
+    </style>
+
+
 </resources>

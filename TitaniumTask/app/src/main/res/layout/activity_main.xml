@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    tools:context="com.sa.testtask.screens.MainActivity">
+
+    <include layout="@layout/toolbar_simpsons"/>
+
+    <EditText
+        android:id="@+id/edit_label"
+        style="@style/MainActivityElementsStyle"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/save"
+        style="@style/MainActivityElementsStyle"
+        android:layout_width="@dimen/image_width"
+        android:layout_height="wrap_content"
+        android:text="@string/save"
+        android:background="@color/colorAccent"
+        android:textColor="@color/defaultWhite"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/image"
+        style="@style/MainActivityElementsStyle"
+        android:layout_width="@dimen/image_width"
+        android:layout_height="@dimen/image_height"/>
+
+    <Button
+        android:id="@+id/random"
+        style="@style/MainActivityElementsStyle"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:textColor="@color/defaultWhite"
+        android:text="@string/random_btn"/>
+
+    <Button
+        android:id="@+id/select"
+        style="@style/MainActivityElementsStyle"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:textColor="@color/defaultWhite"
+        android:text="@string/select_btn"/>
+
+</LinearLayout>
