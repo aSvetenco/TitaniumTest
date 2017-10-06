@@ -2,14 +2,12 @@ package com.sa.testtask.screens;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.widget.Button;
 
 import com.sa.testtask.R;
 import com.sa.testtask.Storage;
@@ -54,18 +52,31 @@ public class ListActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
         showList(imageList);
-        Subscribe();
+        //should subscribe in resume
+        //if on stop will be called all subscriptions will be lost
+        //Subscribe();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Subscribe();
     }
 
     private void Subscribe() {
-        subscription.add(onItemClickRegister());
+        subscription.add(onItemClickRegisterRefactored());
     }
 
     private Subscription onItemClickRegister() {
-        return  getItemPosition()
-                .subscribe(this::startMainActivity,
-                        throwable -> Log.d(TAG, throwable.getMessage(), throwable));
+        return getItemPosition()
+            .subscribe(this::startMainActivity,
+                throwable -> Log.d(TAG, throwable.getMessage(), throwable));
+    }
+
+    private Subscription onItemClickRegisterRefactored() {
+        return adapter.getViewPositionClickedSubject()
+            .subscribe(this::startMainActivity,
+                throwable -> Log.d(TAG, throwable.getMessage(), throwable));
     }
 
     private void startMainActivity(int position) {
@@ -79,7 +90,7 @@ public class ListActivity extends AppCompatActivity {
 
     private Observable<Integer> getItemPosition() {
         return adapter.getViewClickedObservable()
-                .flatMap(view -> Observable.just(recyclerView.getChildAdapterPosition(view)));
+            .flatMap(view -> Observable.just(recyclerView.getChildAdapterPosition(view)));
     }
 
     @Override
