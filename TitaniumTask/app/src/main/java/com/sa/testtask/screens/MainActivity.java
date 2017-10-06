@@ -39,7 +39,6 @@ import static android.view.View.Y;
 
 public class MainActivity extends AppCompatActivity {
 
-
     private static final String IMAGE_POSITION_KEY = "position_key";
     private static final String TAG = MainActivity.class.getSimpleName();
     private CompositeSubscription subscription = new CompositeSubscription();
@@ -74,10 +73,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            position = savedInstanceState.getInt(IMAGE_POSITION_KEY);
+        }else  {
+            position = getIntent().getIntExtra(IMAGE_POSITION_KEY, 0);
+        }
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        position = getIntent().getIntExtra(IMAGE_POSITION_KEY, 0);
         imageList = new ArrayList<>();
         imageList.clear();
         imageList.addAll(Storage.getInstance().getImages());
@@ -95,6 +98,12 @@ public class MainActivity extends AppCompatActivity {
         subscription.add(onRandomClick());
         subscription.add(onSelectClick());
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(IMAGE_POSITION_KEY, position);
     }
 
     @Override
