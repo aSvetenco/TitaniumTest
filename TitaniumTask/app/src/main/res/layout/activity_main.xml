@@ -6,36 +6,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center_horizontal"
     tools:context="com.sa.testtask.screens.MainActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:theme="@style/AppTheme.AppBarOverlay"/>
+    <include layout="@layout/toolbar_simpsons"/>
 
     <EditText
         android:id="@+id/edit_label"
         style="@style/MainActivityElementsStyle"
         android:layout_height="wrap_content"/>
 
+    <Button
+        android:id="@+id/save"
+        style="@style/MainActivityElementsStyle"
+        android:layout_width="@dimen/image_width"
+        android:layout_height="wrap_content"
+        android:text="@string/save"
+        android:background="@color/colorAccent"
+        android:textColor="@color/defaultWhite"
+        android:visibility="gone"/>
+
     <ImageView
         android:id="@+id/image"
         style="@style/MainActivityElementsStyle"
+        android:layout_width="@dimen/image_width"
         android:layout_height="@dimen/image_height"/>
 
     <Button
         android:id="@+id/random"
         style="@style/MainActivityElementsStyle"
         android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:textColor="@color/defaultWhite"
         android:text="@string/random_btn"/>
 
     <Button
         android:id="@+id/select"
         style="@style/MainActivityElementsStyle"
         android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:textColor="@color/defaultWhite"
         android:text="@string/select_btn"/>
 
 </LinearLayout>
