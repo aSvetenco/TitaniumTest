@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Response {
 
+    //if name of field in same as in serialized string, it can be omitted
     @SerializedName("images")
     private List<Image> images = null;
 

@@ -3,11 +3,9 @@ package com.sa.testtask.screens;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,9 +33,8 @@ import rx.Observable;
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
-import static android.view.View.Y;
-
 public class MainActivity extends AppCompatActivity {
+
 
     private static final String IMAGE_POSITION_KEY = "position_key";
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -61,7 +58,9 @@ public class MainActivity extends AppCompatActivity {
 
     @OnTextChanged(R.id.edit_label)
     void onEditTextClick(CharSequence s, int start, int before, int count) {
-        if (s.length() != count) save.setVisibility(View.VISIBLE);
+        //it is not working
+        if (s.length() != count)
+            save.setVisibility(View.VISIBLE);
     }
 
     public static void start(Context context, int position) {
@@ -73,17 +72,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            position = savedInstanceState.getInt(IMAGE_POSITION_KEY);
-        }else  {
-            position = getIntent().getIntExtra(IMAGE_POSITION_KEY, 0);
-        }
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         imageList = new ArrayList<>();
+        //is it necessary to clear empty list?
         imageList.clear();
         imageList.addAll(Storage.getInstance().getImages());
+        position = getIntent().getIntExtra(IMAGE_POSITION_KEY, 0);
         update(position);
     }
 
@@ -97,13 +93,6 @@ public class MainActivity extends AppCompatActivity {
         subscription.add(onSaveClick());
         subscription.add(onRandomClick());
         subscription.add(onSelectClick());
-
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(IMAGE_POSITION_KEY, position);
     }
 
     @Override
@@ -125,35 +114,47 @@ public class MainActivity extends AppCompatActivity {
         Response.Image image = imageList.get(position);
         edit_label.setText(image.getName());
         Picasso.with(this)
-                .load(image.getImage())
-                .fit()
-                .into(imageView);
+            .load(image.getImage())
+            .fit()
+            .into(imageView);
     }
 
     private Subscription onSaveClick() {
         return RxView.clicks(save)
-                .map(aVoid -> edit_label.getText().toString())
-                .doOnNext(string -> imageList.get(position).setName(string))
-                .subscribe(aVoid -> {
-                    save.setVisibility(View.GONE);
-                    hideKeybord();
-                }, throwable -> Log.d(TAG, throwable.getMessage(), throwable));
+            .map(aVoid -> edit_label.getText().toString())
+            .doOnNext(string -> imageList.get(position).setName(string))
+            .subscribe(aVoid -> {
+                save.setVisibility(View.GONE);
+                hideKeybord();
+            }, throwable -> Log.d(TAG, throwable.getMessage(), throwable));
     }
 
     private Subscription onRandomClick() {
         return RxView.clicks(random)
-                .map(aVoid -> getRandomPosition())
-                .subscribe(this::update
-                        , throwable -> Log.d(TAG, throwable.getMessage(), throwable));
+            .map(aVoid -> getRandomPosition())
+            .subscribe(this::update
+                , throwable -> Log.d(TAG, throwable.getMessage(), throwable));
     }
 
     private Subscription onSelectClick() {
         return RxView.clicks(select)
-                .subscribe(aVoid -> startListActivity()
-                        , throwable -> Log.d(TAG, throwable.getMessage(), throwable));
+            .subscribe(aVoid -> startListActivity()
+                , throwable -> Log.d(TAG, throwable.getMessage(), throwable));
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        //just for example
+        Log.d(TAG, "onNewIntent: got new intent");
+        position = intent.getIntExtra(IMAGE_POSITION_KEY, 0);
+        update(position);
     }
 
     private void startListActivity() {
+        //you are creating multiple instances of this activity every time user selecting image
+        //you should start activity for result to prevent multiple activity creations
+        //or you can make this activity single top and catch all intents in onNewIntent
         ListActivity.start(this);
     }
 
@@ -168,22 +169,26 @@ public class MainActivity extends AppCompatActivity {
             dialog.setMessage(getString(R.string.created_by));
         } else {
             dialog = new AlertDialog.Builder(this)
-                    .setMessage(getString(R.string.created_by))
-                    .setNegativeButton(R.string.dialog_button_ok, (dialog1, which) -> {
-                        dialog1.dismiss();
-                        dismissDialog().unsubscribe();
-                    })
-                    .create();
+                .setMessage(getString(R.string.created_by))
+                .setNegativeButton(R.string.dialog_button_ok, (dialog1, which) -> {
+                    dialog1.dismiss();
+                    //here you are creating new subscription that is unsubscribed instantly
+                    dismissDialog().unsubscribe();
+                })
+                .create();
             dialog.setCancelable(false);
             dialog.show();
+            //you should keep this subscription somewhere to dispose it on click
             dismissDialog();
         }
     }
 
     private Subscription dismissDialog() {
-       return Observable.timer(10, TimeUnit.SECONDS)
-                .doOnNext(aLong -> dialog.dismiss())
-                .subscribe();
+        return Observable.timer(10, TimeUnit.SECONDS)
+            .doOnNext(aLong -> {
+                dialog.dismiss();
+            })
+            .subscribe();
 
     }
 
