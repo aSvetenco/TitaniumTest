@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">TitaniumTask</string>
+    <string name="no_network">No network connection please check your network settings and try again</string>
+    <string name="random_btn">Random</string>
+    <string name="select_btn">Select</string>
+    <string name="note">note</string>
+    <string name="empty_string"/>
 </resources>

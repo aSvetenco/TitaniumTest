@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="spacing_all_negative_10dp">-10dp</dimen>
+    <dimen name="spacing_small_size">4dp</dimen>
+    <dimen name="spacing_normal_size">8dp</dimen>
+    <dimen name="spacing_all_0.5dp">0.5dp</dimen>
+    <dimen name="spacing_all_1dp">1dp</dimen>
+    <dimen name="spacing_all_2dp">2dp</dimen>
+    <dimen name="spacing_all_5dp">5dp</dimen>
+    <dimen name="spacing_all_7dp">7dp</dimen>
+    <dimen name="spacing_all_10dp">10dp</dimen>
+    <dimen name="spacing_all_12dp">12dp</dimen>
+    <dimen name="spacing_all_13dp">13dp</dimen>
+    <dimen name="spacing_all_14dp">14dp</dimen>
+    <dimen name="spacing_all_15dp">15dp</dimen>
+    <dimen name="spacing_all_16dp">16dp</dimen>
+    <dimen name="spacing_all_18dp">18dp</dimen>
+    <dimen name="spacing_all_20dp">20dp</dimen>
+    <dimen name="spacing_all_24dp">24dp</dimen>
+    <dimen name="spacing_all_28dp">28dp</dimen>
+    <dimen name="spacing_all_32dp">32dp</dimen>
+    <dimen name="spacing_all_36dp">36dp</dimen>
+    <dimen name="spacing_all_40dp">40dp</dimen>
+    <dimen name="spacing_all_48dp">48dp</dimen>
+    <dimen name="spacing_all_50dp">50dp</dimen>
+    <dimen name="spacing_all_54dp">54dp</dimen>
+    <dimen name="spacing_all_60dp">60dp</dimen>
+    <dimen name="spacing_all_64dp">64dp</dimen>
+    <dimen name="spacing_all_70dp">70dp</dimen>
+    <dimen name="spacing_all_100dp">100dp</dimen>
+
+    <dimen name="image_height">200dp</dimen>
+</resources>
