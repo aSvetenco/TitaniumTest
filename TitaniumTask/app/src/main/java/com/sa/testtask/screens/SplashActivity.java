@@ -1,5 +1,6 @@
 package com.sa.testtask.screens;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,8 +14,6 @@ import com.sa.testtask.Storage;
 import com.sa.testtask.api.Api;
 import com.sa.testtask.api.Response;
 
-import java.util.List;
-
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -22,6 +21,7 @@ import rx.schedulers.Schedulers;
 public class SplashActivity extends AppCompatActivity {
 
     private static final String TAG = SplashActivity.class.getSimpleName();
+    private ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +46,7 @@ public class SplashActivity extends AppCompatActivity {
                         return true;
                     }
                 })
+                .doOnNext(aBoolean -> showProgressDialog())
                 .observeOn(Schedulers.io())
                 .flatMap(integer -> Api.getImagesApi().getImages())
                 .filter(response -> response != null)
@@ -53,13 +54,31 @@ public class SplashActivity extends AppCompatActivity {
                 .filter(images -> images != null && images.size() > 0)
                 .doOnNext(images -> Storage.getInstance().setImages(images))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::startDashboard,
+                .subscribe(images -> startMainActivity(),
                         throwable -> Log.d(TAG, throwable.getMessage(), throwable));
     }
 
-    private void startDashboard(List<Response.Image> images) {
-        List<Response.Image> images1 = images;
+    private void startMainActivity() {
+        hideProgressDialog();
+        MainActivity.start(this, 0);
+        finish();
     }
+
+    private void showProgressDialog() {
+        if (progress == null) {
+            progress = new ProgressDialog(this);
+        }
+        progress.setMessage(getString(R.string.loading));
+        progress.show();
+    }
+
+    private void hideProgressDialog() {
+        if (progress.isShowing()) {
+            progress.dismiss();
+        }
+    }
+
+
 
     public Observable<Boolean> isNetworkAvailble() {
         ConnectivityManager connectivityManager =
@@ -71,6 +90,8 @@ public class SplashActivity extends AppCompatActivity {
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
+
+
 
 
 }

@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-            android:id="@+id/menu_bucket"
+            android:id="@+id/menu_info"
             android:icon="@drawable/ic_note"
             android:title="@string/note"
             android:menuCategory="secondary"

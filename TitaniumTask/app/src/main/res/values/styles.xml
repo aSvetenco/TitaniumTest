@@ -28,5 +28,14 @@
         <item name="android:layout_marginRight">@dimen/spacing_all_20dp</item>
     </style>
 
+    <style name="ItemImageTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/spacing_all_10dp</item>
+        <item name="android:textSize">@dimen/txt_16sp_size</item>
+        <item name="android:textAllCaps">true</item>
+
+    </style>
+
 
 </resources>
