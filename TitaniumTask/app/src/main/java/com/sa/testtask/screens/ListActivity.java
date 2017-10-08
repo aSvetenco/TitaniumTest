@@ -1,6 +1,6 @@
 package com.sa.testtask.screens;
 
-import android.content.Context;
+
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,8 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.widget.Button;
 
 import com.sa.testtask.R;
 import com.sa.testtask.Storage;
@@ -25,6 +23,8 @@ import rx.Observable;
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
+import static com.sa.testtask.screens.MainActivity.IMAGE_POSITION_KEY;
+
 public class ListActivity extends AppCompatActivity {
 
 
@@ -38,10 +38,6 @@ public class ListActivity extends AppCompatActivity {
     private ImagesRVAdapter adapter;
     private List<Response.Image> imageList;
 
-    public static void start(Context context) {
-        context.startActivity(new Intent(context, ListActivity.class));
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,8 +50,13 @@ public class ListActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
         showList(imageList);
-        Subscribe();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Subscribe();
     }
 
     private void Subscribe() {
@@ -63,23 +64,20 @@ public class ListActivity extends AppCompatActivity {
     }
 
     private Subscription onItemClickRegister() {
-        return  getItemPosition()
+        return  adapter.getViewClickedObservable()
                 .subscribe(this::startMainActivity,
                         throwable -> Log.d(TAG, throwable.getMessage(), throwable));
     }
 
     private void startMainActivity(int position) {
-        MainActivity.start(this, position);
+        Intent intent = new Intent();
+        intent.putExtra(IMAGE_POSITION_KEY, position);
+        setResult(RESULT_OK, intent);
         finish();
     }
 
     private void showList(List<Response.Image> list) {
         adapter.swapData(list);
-    }
-
-    private Observable<Integer> getItemPosition() {
-        return adapter.getViewClickedObservable()
-                .flatMap(view -> Observable.just(recyclerView.getChildAdapterPosition(view)));
     }
 
     @Override

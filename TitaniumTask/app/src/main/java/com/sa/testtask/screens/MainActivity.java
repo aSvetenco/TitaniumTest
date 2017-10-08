@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,16 +34,21 @@ import rx.Observable;
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
-import static android.view.View.Y;
+import static android.R.attr.editable;
+import static butterknife.OnTextChanged.Callback.AFTER_TEXT_CHANGED;
+import static butterknife.OnTextChanged.Callback.TEXT_CHANGED;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String IMAGE_POSITION_KEY = "position_key";
+    private static final int DELAY = 10;
+    public static final String IMAGE_POSITION_KEY = "position_key";
+    private static final int LIST_REQUEST_CODE = 9898;
     private static final String TAG = MainActivity.class.getSimpleName();
     private CompositeSubscription subscription = new CompositeSubscription();
     private int position;
     private List<Response.Image> imageList;
     private AlertDialog dialog;
+    Subscription dialogSubscription;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -57,9 +61,9 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.select)
     Button select;
     @BindView(R.id.edit_label)
-    EditText edit_label;
+    EditText editLabel;
 
-    @OnTextChanged(R.id.edit_label)
+    @OnTextChanged(value = R.id.edit_label, callback = TEXT_CHANGED)
     void onEditTextClick(CharSequence s, int start, int before, int count) {
         if (s.length() != count) save.setVisibility(View.VISIBLE);
     }
@@ -75,14 +79,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             position = savedInstanceState.getInt(IMAGE_POSITION_KEY);
-        }else  {
+        } else {
             position = getIntent().getIntExtra(IMAGE_POSITION_KEY, 0);
         }
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         imageList = new ArrayList<>();
-        imageList.clear();
         imageList.addAll(Storage.getInstance().getImages());
         update(position);
     }
@@ -110,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_info) {
             showDialog();
+            dismissDialog();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -120,10 +124,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-
     private void update(int position) {
         Response.Image image = imageList.get(position);
-        edit_label.setText(image.getName());
+        editLabel.setText(image.getName());
         Picasso.with(this)
                 .load(image.getImage())
                 .fit()
@@ -132,11 +135,11 @@ public class MainActivity extends AppCompatActivity {
 
     private Subscription onSaveClick() {
         return RxView.clicks(save)
-                .map(aVoid -> edit_label.getText().toString())
+                .map(aVoid -> editLabel.getText().toString())
                 .doOnNext(string -> imageList.get(position).setName(string))
                 .subscribe(aVoid -> {
                     save.setVisibility(View.GONE);
-                    hideKeybord();
+                    hideKeyboard();
                 }, throwable -> Log.d(TAG, throwable.getMessage(), throwable));
     }
 
@@ -154,7 +157,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startListActivity() {
-        ListActivity.start(this);
+        Intent intent = new Intent(this, ListActivity.class);
+        startActivityForResult(intent, LIST_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == LIST_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                position = data.getIntExtra(IMAGE_POSITION_KEY, 0);
+                update(position);
+            }
+        }
     }
 
     private int getRandomPosition() {
@@ -171,23 +185,22 @@ public class MainActivity extends AppCompatActivity {
                     .setMessage(getString(R.string.created_by))
                     .setNegativeButton(R.string.dialog_button_ok, (dialog1, which) -> {
                         dialog1.dismiss();
-                        dismissDialog().unsubscribe();
+                        dialogSubscription.unsubscribe();
                     })
                     .create();
             dialog.setCancelable(false);
             dialog.show();
-            dismissDialog();
         }
     }
 
-    private Subscription dismissDialog() {
-       return Observable.timer(10, TimeUnit.SECONDS)
+    private void dismissDialog() {
+        dialogSubscription = Observable.timer(DELAY, TimeUnit.SECONDS)
                 .doOnNext(aLong -> dialog.dismiss())
                 .subscribe();
 
     }
 
-    private void hideKeybord() {
+    private void hideKeyboard() {
         View view = this.getCurrentFocus();
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -200,6 +213,5 @@ public class MainActivity extends AppCompatActivity {
         subscription.clear();
         super.onStop();
     }
-
 
 }
