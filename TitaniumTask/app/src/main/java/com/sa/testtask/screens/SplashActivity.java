@@ -1,12 +1,14 @@
 package com.sa.testtask.screens;
 
-import android.app.ProgressDialog;
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.sa.testtask.R;
@@ -14,6 +16,8 @@ import com.sa.testtask.Storage;
 import com.sa.testtask.api.Api;
 import com.sa.testtask.api.Response;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -21,12 +25,15 @@ import rx.schedulers.Schedulers;
 public class SplashActivity extends AppCompatActivity {
 
     private static final String TAG = SplashActivity.class.getSimpleName();
-    private ProgressDialog progress;
+
+    @BindView(R.id.progress_container)
+    LinearLayout progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        ButterKnife.bind(this);
 
     }
 
@@ -38,15 +45,13 @@ public class SplashActivity extends AppCompatActivity {
 
     private void request() {
         isNetworkAvailble()
-                .filter(aBoolean -> {
-                    if (!aBoolean) {
+                .doOnNext(isConnected -> {
+                    if (!isConnected) {
+                        hideProgressDialog();
                         showToast(getString(R.string.no_network));
-                        return false;
-                    } else {
-                        return true;
                     }
                 })
-                .doOnNext(aBoolean -> showProgressDialog())
+                .filter(isConnected -> isConnected)
                 .observeOn(Schedulers.io())
                 .flatMap(integer -> Api.getImagesApi().getImages())
                 .filter(response -> response != null)
@@ -64,21 +69,10 @@ public class SplashActivity extends AppCompatActivity {
         finish();
     }
 
-    private void showProgressDialog() {
-        if (progress == null) {
-            progress = new ProgressDialog(this);
-        }
-        progress.setMessage(getString(R.string.loading));
-        progress.show();
-    }
 
     private void hideProgressDialog() {
-        if (progress.isShowing()) {
-            progress.dismiss();
-        }
+     progress.setVisibility(View.GONE);
     }
-
-
 
     public Observable<Boolean> isNetworkAvailble() {
         ConnectivityManager connectivityManager =
@@ -90,8 +84,6 @@ public class SplashActivity extends AppCompatActivity {
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
-
-
 
 
 }
