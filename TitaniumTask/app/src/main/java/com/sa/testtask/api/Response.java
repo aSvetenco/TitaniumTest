@@ -6,7 +6,6 @@ import java.util.List;
 
 public class Response {
 
-    @SerializedName("images")
     private List<Image> images = null;
 
     public List<Image> getImages() {
@@ -19,9 +18,7 @@ public class Response {
 
     public static class Image {
 
-        @SerializedName("name")
         private String name;
-        @SerializedName("image")
         private String image;
 
         public String getName() {

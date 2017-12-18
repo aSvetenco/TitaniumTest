@@ -18,7 +18,7 @@ import rx.subjects.PublishSubject;
 
 public class ImagesRVAdapter extends RecyclerView.Adapter<ImagesVH> {
 
-    private final PublishSubject<View> publishSubject = PublishSubject.create();
+    private final PublishSubject<Integer> publishSubject = PublishSubject.create();
 
     private List<Response.Image> imageList = new ArrayList<>();
 
@@ -31,23 +31,22 @@ public class ImagesRVAdapter extends RecyclerView.Adapter<ImagesVH> {
         notifyDataSetChanged();
     }
 
-    public Observable<View> getViewClickedObservable() {
+    public Observable<Integer> getViewClickedObservable() {
         return publishSubject.asObservable();
     }
+
     @Override
     public ImagesVH onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.item_image, parent, false);
-        RxView.clicks(view).takeUntil(RxView.detaches(parent)).map(aVoid -> view).subscribe(publishSubject);
         return new ImagesVH(view);
-
     }
 
     @Override
     public void onBindViewHolder(ImagesVH holder, int position) {
         Response.Image image = imageList.get(position);
         holder.bind(image.getImage(), image.getName(), getPosition(position));
-
+        holder.itemView.setOnClickListener(view -> publishSubject.onNext(position));
     }
 
     private String getPosition(int position) {
@@ -57,10 +56,6 @@ public class ImagesRVAdapter extends RecyclerView.Adapter<ImagesVH> {
     @Override
     public int getItemCount() {
         return imageList.size();
-    }
-
-    private Response.Image getImage(int position) {
-        return imageList.get(position);
     }
 
 }
