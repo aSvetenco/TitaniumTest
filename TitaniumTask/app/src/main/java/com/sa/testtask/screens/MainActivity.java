@@ -3,10 +3,9 @@ package com.sa.testtask.screens;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,8 +33,6 @@ import rx.Observable;
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
-import static android.R.attr.editable;
-import static butterknife.OnTextChanged.Callback.AFTER_TEXT_CHANGED;
 import static butterknife.OnTextChanged.Callback.TEXT_CHANGED;
 
 public class MainActivity extends AppCompatActivity {
@@ -93,10 +90,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Subscribe();
+        subscribe();
     }
 
-    private void Subscribe() {
+    private void subscribe() {
         subscription.add(onSaveClick());
         subscription.add(onRandomClick());
         subscription.add(onSelectClick());

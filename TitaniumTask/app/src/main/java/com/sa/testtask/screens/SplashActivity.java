@@ -78,7 +78,7 @@ public class SplashActivity extends AppCompatActivity {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return Observable.defer(() -> Observable.just(activeNetworkInfo != null && activeNetworkInfo.isConnected()));
+        return Observable.just(activeNetworkInfo != null && activeNetworkInfo.isConnected());
     }
 
     private void showToast(String message) {
